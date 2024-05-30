@@ -9,7 +9,7 @@ const TransactionsScreen = () => {
   const [keyword, setKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false); // State untuk menunjukkan status loading
+  const [loading, setLoading] = useState(false);
 
   const API_URL = 'http://localhost:5000/dataproduk';
 
@@ -20,7 +20,7 @@ const TransactionsScreen = () => {
         throw new Error('No token found');
       }
 
-      setLoading(true); // Memulai loading setelah waktu jeda
+      setLoading(true);
       setTimeout(async () => {
         const { data } = await axios.get(API_URL, {
           headers: {
@@ -29,11 +29,11 @@ const TransactionsScreen = () => {
         });
         setDataProduk(data);
         setTotalPages(Math.ceil(data.length / 10));
-        setLoading(false); // Menghentikan loading setelah data diterima
-      }, 1000); // Waktu jeda 1 detik
+        setLoading(false);
+      }, 1000);
     } catch (error) {
       console.error('Error:', error);
-      setLoading(false); // Menghentikan loading dalam kasus error
+      setLoading(false);
     }
   };
 
