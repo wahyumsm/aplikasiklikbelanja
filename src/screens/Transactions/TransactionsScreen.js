@@ -9,6 +9,7 @@ const TransactionsScreen = () => {
   const [keyword, setKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false); // State untuk menunjukkan status loading
 
   const API_URL = 'http://localhost:5000/dataproduk';
 
@@ -19,22 +20,20 @@ const TransactionsScreen = () => {
         throw new Error('No token found');
       }
 
-      const { data } = await axios.get(API_URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setDataProduk(data);
-      setTotalPages(Math.ceil(data.length / 10));
-      console.log(setTotalPages);
+      setLoading(true); // Memulai loading setelah waktu jeda
+      setTimeout(async () => {
+        const { data } = await axios.get(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setDataProduk(data);
+        setTotalPages(Math.ceil(data.length / 10));
+        setLoading(false); // Menghentikan loading setelah data diterima
+      }, 1000); // Waktu jeda 1 detik
     } catch (error) {
-      if (error.response) {
-        console.error('Error response:', error.response);
-      } else if (error.request) {
-        console.error('Error request:', error.request);
-      } else {
-        console.error('Error message:', error.message);
-      }
+      console.error('Error:', error);
+      setLoading(false); // Menghentikan loading dalam kasus error
     }
   };
 
@@ -62,6 +61,7 @@ const TransactionsScreen = () => {
   const handleDetailClick = (item) => {
     console.log('Detail clicked for item:', item);
   };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -76,18 +76,41 @@ const TransactionsScreen = () => {
       }
 
       .action-button.edit {
-        background-color: #4caf50; /* Green */
+        background-color: #4caf50; 
         color: white;
       }
 
       .action-button.delete {
-        background-color: #f44336; /* Red */
+        background-color: #f44336; 
         color: white;
       }
 
       .action-button.detail {
-        background-color: #2196f3; /* Blue */
+        background-color: #2196f3; 
         color: white;
+      }
+
+      .spinner-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+.spinner {
+  border: 4px solid rgba(255, 224, 102, 0.1); 
+  border-left-color: #FBC02D; 
+  border-radius: 50%;
+  width: 100px; 
+  height: 100px; 
+  animation: spin 1s linear infinite;
+}
+
+
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
     `;
 
@@ -103,59 +126,66 @@ const TransactionsScreen = () => {
         onPageChange={handlePageChange}
       />
 
-      {dataProduk && dataProduk.length > 0 && (
-        <table className='data-table'>
-          <thead>
-            <tr>
-              <th aria-label='empty' className='center responsive-hide'>
-                Nomor
-              </th>
-              <th className='left responsive-hide'>Nama Produk</th>
-              <th className='left responsive-hide'>Kategori</th>
-              <th className='left responsive-hide'>Harga</th>
-              <th className='left responsive-hide'>Stok</th>
-              <th className='left responsive-hide'>Status</th>
-              <th className='center'>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataProduk.map((item, index) => (
-              <tr key={item.id.toString()}>
-                <td className='center responsive-hide'>{index + 1}</td>
-                <td className='center responsive-hide'>{item.namaproduk}</td>
-                <td className='center responsive-hide'>{item.kategori}</td>
-                <td className='center responsive-hide'>{item.harga}</td>
-                <td className='center responsive-hide'>{item.stok}</td>
-                <td className='center responsive-hide'>{item.status}</td>
-                <td className='center responsive-hide'>
-                  <div className='action-buttons'>
-                    <button
-                      type='button'
-                      className='action-button edit'
-                      onClick={() => handleEditClick(item)}
-                    >
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      type='button'
-                      className='action-button delete'
-                      onClick={() => handleDeleteClick(item)}
-                    >
-                      <span>Delete</span>
-                    </button>
-                    <button
-                      type='button'
-                      className='action-button detail'
-                      onClick={() => handleDetailClick(item)}
-                    >
-                      <span>Detail</span>
-                    </button>
-                  </div>
-                </td>
+      {loading ? (
+        <div className='spinner-wrapper'>
+          <div className='spinner' />
+        </div>
+      ) : (
+        dataProduk &&
+        dataProduk.length > 0 && (
+          <table className='data-table'>
+            <thead>
+              <tr>
+                <th aria-label='empty' className='center responsive-hide'>
+                  Nomor
+                </th>
+                <th className='center responsive-hide'>Nama Produk</th>
+                <th className='center responsive-hide'>Kategori</th>
+                <th className='center responsive-hide'>Harga</th>
+                <th className='center responsive-hide'>Stok</th>
+                <th className='center responsive-hide'>Status</th>
+                <th className='center'>Aksi</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {dataProduk.map((item, index) => (
+                <tr key={item.id.toString()}>
+                  <td className='center responsive-hide'>{index + 1}</td>
+                  <td className='center responsive-hide'>{item.namaproduk}</td>
+                  <td className='center responsive-hide'>{item.kategori}</td>
+                  <td className='center responsive-hide'>{item.harga}</td>
+                  <td className='center responsive-hide'>{item.stok}</td>
+                  <td className='center responsive-hide'>{item.status}</td>
+                  <td className='center responsive-hide'>
+                    <div className='action-buttons'>
+                      <button
+                        type='button'
+                        className='action-button edit'
+                        onClick={() => handleEditClick(item)}
+                      >
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        type='button'
+                        className='action-button delete'
+                        onClick={() => handleDeleteClick(item)}
+                      >
+                        <span>Delete</span>
+                      </button>
+                      <button
+                        type='button'
+                        className='action-button detail'
+                        onClick={() => handleDetailClick(item)}
+                      >
+                        <span>Detail</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
       )}
       <style>{styles}</style>
     </SiteLayout>
