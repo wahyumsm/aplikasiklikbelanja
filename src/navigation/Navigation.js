@@ -10,6 +10,7 @@ import DashboardScreen from '../screens/Dashboard/DashboardScreen';
 import TransactionsScreen from '../screens/Transactions/TransactionsScreen';
 
 import NotFoundScreen from '../screens/NotFound/NotFoundScreen';
+import TambahProduk from '../screens/Transactions/TambahProduk';
 
 const Navigation = () => (
   <Routes>
@@ -20,6 +21,9 @@ const Navigation = () => (
     <Route path='/capital' element={<CapitalScreen />} />
 
     <Route path='/transactions' element={<TransactionsScreen />} />
+
+    <Route path='/TambahProduk' element={<TambahProduk />} />
+
     <Route path='/members/forgot-password' element={<ForgotScreen />} />
     <Route path='/members/signup' element={<SignupScreen />} />
     <Route path='*' element={<NotFoundScreen />} status={404} />

@@ -116,7 +116,7 @@ const TransactionsScreen = () => {
 
   return (
     <SiteLayout>
-      <Header icon='sort' title='Dashboard' />
+      <Header icon='sort' title='Tabel Data Produk' />
       <TopBar
         searchValue={keyword}
         searchOnChange={handleSearchValue}
@@ -144,6 +144,7 @@ const TransactionsScreen = () => {
                 <th className='center responsive-hide'>Harga</th>
                 <th className='center responsive-hide'>Stok</th>
                 <th className='center responsive-hide'>Status</th>
+                <th className='center responsive-hide'>Tanggal Dibuat</th>
                 <th className='center'>Aksi</th>
               </tr>
             </thead>
@@ -157,23 +158,27 @@ const TransactionsScreen = () => {
                   <td className='center responsive-hide'>{item.stok}</td>
                   <td className='center responsive-hide'>{item.status}</td>
                   <td className='center responsive-hide'>
+                    {new Date(item.datecreated).toLocaleString()}
+                  </td>
+
+                  <td className='center responsive-hide'>
                     <div className='action-buttons'>
                       <button
-                        type='button'
+                        type='button' // Tambahkan type='button'
                         className='action-button edit'
                         onClick={() => handleEditClick(item)}
                       >
                         <span>Edit</span>
                       </button>
                       <button
-                        type='button'
+                        type='button' // Tambahkan type='button'
                         className='action-button delete'
                         onClick={() => handleDeleteClick(item)}
                       >
                         <span>Delete</span>
                       </button>
                       <button
-                        type='button'
+                        type='button' // Tambahkan type='button'
                         className='action-button detail'
                         onClick={() => handleDetailClick(item)}
                       >
