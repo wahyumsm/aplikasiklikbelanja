@@ -44,17 +44,14 @@ const TambahProduk = () => {
 
     console.log(dataToSend);
     try {
-      await axios.post('http://localhost:5000/dataproduk', dataToSend, {
+      const response = await axios.post('http://localhost:5000/dataproduk', formData, dataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert('Data berhasil ditambahkan');
-      // Arahkan ke halaman transaksi setelah berhasil menambahkan data
-      window.location.href = 'http://localhost:3000/#/transactions';
+      console.log('Response:', response.data);
     } catch (error) {
       console.error('Error:', error);
-      alert('Gagal menambahkan data');
     }
   };
 

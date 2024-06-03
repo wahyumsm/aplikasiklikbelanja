@@ -183,7 +183,7 @@ const TransactionsScreen = () => {
                     {new Date(item.datecreated).toLocaleString()}
                   </td>
 
-                  <td className='center responsive-hide'>
+                  <td className='center rssponsive-hide'>
                     <div className='action-buttons'>
                       <button
                         type='button' // Tambahkan type='button'
