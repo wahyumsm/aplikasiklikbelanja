@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
 import SiteLayout from '../../layouts/SiteLayout';
 import Header from '../../components/Header/Header';
@@ -50,10 +52,6 @@ const TransactionsScreen = () => {
     e.preventDefault();
   };
 
-  const handleEditClick = (item) => {
-    console.log('Edit clicked for item:', item);
-  };
-
   const handleDeleteClick = async (item) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -88,6 +86,13 @@ const TransactionsScreen = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const navigate = useNavigate();
+
+  const handleEditClick = (id) => {
+    console.log(handleEditClick, 'hahahha');
+    navigate(`/EditProduk/${id}`);
   };
 
   const styles = `
@@ -188,7 +193,7 @@ const TransactionsScreen = () => {
                       <button
                         type='button' // Tambahkan type='button'
                         className='action-button edit'
-                        onClick={() => handleEditClick(item)}
+                        onClick={() => handleEditClick(item.id)}
                       >
                         <span>Edit</span>
                       </button>

@@ -1,26 +1,32 @@
-import axios from 'axios';
-import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import SiteLayout from '../../layouts/SiteLayout';
 import Header from '../../components/Header/Header';
 
-const TambahProduk = () => {
-  const [status, setStatus] = useState('');
-  const [formData, setFormData] = useState({
+const EditProduk = () => {
+  const { id } = useParams();
+  const [produkData, SetProdukData] = useState({
     namaproduk: '',
     kategori: '',
     harga: '',
     stok: '',
   });
-
-  const handleChangeSelected = (e) => {
-    e.preventDefault();
-    setStatus(e.target.value);
-  };
-
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const response = await fetch(`/api/products/${id}`);
+        const data = await response.json();
+        SetProdukData(data);
+      } catch (error) {
+        console.log('error mengambil id data', error);
+      }
+    };
+    fetchProductData();
+  }, [id]);
   const labelStyle = { marginRight: 9, marginLeft: 5 };
   const inputStyle = {
-    border: '1px solid #C4C4C4',
+    border: '1px solid #666',
     borderRadius: '4px',
     padding: '10px',
     fontSize: '14px',
@@ -29,35 +35,9 @@ const TambahProduk = () => {
     backgroundColor: 'rgba(128, 128, 128, 0.1)',
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    const dataToSend = { ...formData, status };
-
-    console.log(dataToSend);
-    try {
-      const response = await axios.post('http://localhost:5000/dataproduk', formData, dataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Response:', response.data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   return (
     <SiteLayout>
-      <Header icon='add' title='Tambah Data' />
+      <Header icon='add' title='Edit Data' />
 
       <div className='container'>
         <div className='box'>
@@ -69,7 +49,7 @@ const TambahProduk = () => {
                 name='namaproduk'
                 placeholder='Masukkan Nama Produk'
                 style={inputStyle}
-                onChange={handleChange}
+                value={produkData.namaproduk}
               />
 
               <Form.Label style={labelStyle}>Kategori</Form.Label>
@@ -78,7 +58,6 @@ const TambahProduk = () => {
                 name='kategori'
                 placeholder='Masukkan Kategori'
                 style={inputStyle}
-                onChange={handleChange}
               />
               <Form.Label style={labelStyle}>Harga</Form.Label>
               <Form.Control
@@ -86,7 +65,6 @@ const TambahProduk = () => {
                 name='harga'
                 placeholder='Masukkan Total Harga'
                 style={inputStyle}
-                onChange={handleChange}
               />
               <Form.Label style={{ ...labelStyle, marginRight: 34 }}>Total Stok</Form.Label>
               <Form.Control
@@ -94,7 +72,6 @@ const TambahProduk = () => {
                 name='stok'
                 placeholder='Masukkan Total Stok'
                 style={inputStyle}
-                onChange={handleChange}
               />
 
               <Form.Label style={labelStyle}>Status:</Form.Label>
@@ -102,15 +79,13 @@ const TambahProduk = () => {
                 as='select'
                 name='status'
                 style={{ ...inputStyle, width: '285px', marginLeft: 15 }}
-                onChange={handleChangeSelected}
-                value={status}
               >
                 <option>Aktif</option>
                 <option>Non-Aktif</option>
               </Form.Control>
             </Form.Group>
             <Button
-              onClick={handleSubmit}
+              // onClick={handleSubmit}
               style={{
                 backgroundColor: '#1baa75',
                 fontSize: '16px',
@@ -126,7 +101,7 @@ const TambahProduk = () => {
               }}
               type='button'
             >
-              Tambah Data
+              Ubah Data
             </Button>
           </Form>
         </div>
@@ -135,4 +110,4 @@ const TambahProduk = () => {
   );
 };
 
-export default TambahProduk;
+export default EditProduk;
