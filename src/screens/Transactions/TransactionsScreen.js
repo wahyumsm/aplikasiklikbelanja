@@ -54,8 +54,32 @@ const TransactionsScreen = () => {
     console.log('Edit clicked for item:', item);
   };
 
-  const handleDeleteClick = (item) => {
-    console.log('Delete clicked for item:', item);
+  const handleDeleteClick = async (item) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token tidak ditemukan');
+    }
+
+    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus produk ini?');
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`http://localhost:5000/dataproduk/${item.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('deleted', response.data);
+
+      setDataProduk((prevData) => prevData.filter((data) => data.id !== item.id));
+
+      window.alert('Produk berhasil dihapus!');
+    } catch (error) {
+      console.error('Error deleting data:', error);
+      window.alert('Terjadi kesalahan saat menghapus produk!');
+    }
   };
 
   const handleDetailClick = (item) => {
@@ -97,16 +121,14 @@ const TransactionsScreen = () => {
         height: 100vh;
       }
 
-.spinner {
-  border: 4px solid rgba(255, 224, 102, 0.1); 
-  border-left-color: #FBC02D; 
-  border-radius: 50%;
-  width: 100px; 
-  height: 100px; 
-  animation: spin 1s linear infinite;
-}
-
-
+      .spinner {
+        border: 4px solid rgba(255, 224, 102, 0.1); 
+        border-left-color: #FBC02D; 
+        border-radius: 50%;
+        width: 100px; 
+        height: 100px; 
+        animation: spin 1s linear infinite;
+      }
 
       @keyframes spin {
         0% { transform: rotate(0deg); }
