@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Pagination } from '@mui/material';
+
 import SiteLayout from '../../layouts/SiteLayout';
 import Header from '../../components/Header/Header';
 import TopBar from '../../components/Tables/TopBar/TopBar';
@@ -153,72 +154,82 @@ const TransactionsScreen = () => {
         onPageChange={handlePageChange}
       />
 
-      {loading ? (
-        <div className='spinner-wrapper'>
-          <div className='spinner' />
-        </div>
-      ) : (
-        dataProduk &&
-        dataProduk.length > 0 && (
-          <table className='data-table'>
-            <thead>
-              <tr>
-                <th aria-label='empty' className='center responsive-hide'>
-                  Nomor
-                </th>
-                <th className='center responsive-hide'>Nama Produk</th>
-                <th className='center responsive-hide'>Kategori</th>
-                <th className='center responsive-hide'>Harga</th>
-                <th className='center responsive-hide'>Stok</th>
-                <th className='center responsive-hide'>Status</th>
-                <th className='center responsive-hide'>Tanggal Dibuat</th>
-                <th className='center'>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dataProduk.map((item, index) => (
-                <tr key={item.id.toString()}>
-                  <td className='center responsive-hide'>{index + 1}</td>
-                  <td className='center responsive-hide'>{item.namaproduk}</td>
-                  <td className='center responsive-hide'>{item.kategori}</td>
-                  <td className='center responsive-hide'>{item.harga}</td>
-                  <td className='center responsive-hide'>{item.stok}</td>
-                  <td className='center responsive-hide'>{item.status}</td>
-                  <td className='center responsive-hide'>
-                    {new Date(item.datecreated).toLocaleString()}
-                  </td>
+      <div>
+        {loading ? (
+          <div className='spinner-wrapper'>
+            <div className='spinner' />
+          </div>
+        ) : (
+          dataProduk &&
+          dataProduk.length > 0 && (
+            <div>
+              <table className='data-table'>
+                <thead>
+                  <tr>
+                    <th className='center'>Nomor</th>
+                    <th className='center'>Nama Produk</th>
+                    <th className='center'>Kategori</th>
+                    <th className='center'>Harga</th>
+                    <th className='center'>Stok</th>
+                    <th className='center'>Status</th>
+                    <th className='center'>Tanggal Dibuat</th>
+                    <th className='center'>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataProduk.map((item, index) => (
+                    <tr key={item.id.toString()}>
+                      <td className='center'>{index + 1}</td>
+                      <td className='center'>{item.namaproduk}</td>
+                      <td className='center'>{item.kategori}</td>
+                      <td className='center'>{item.harga}</td>
+                      <td className='center'>{item.stok}</td>
+                      <td className='center'>{item.status}</td>
+                      <td className='center'>{new Date(item.datecreated).toLocaleString()}</td>
 
-                  <td className='center rssponsive-hide'>
-                    <div className='action-buttons'>
-                      <button
-                        type='button' // Tambahkan type='button'
-                        className='action-button edit'
-                        onClick={() => handleEditClick(item.id)}
-                      >
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        type='button' // Tambahkan type='button'
-                        className='action-button delete'
-                        onClick={() => handleDeleteClick(item)}
-                      >
-                        <span>Delete</span>
-                      </button>
-                      <button
-                        type='button' // Tambahkan type='button'
-                        className='action-button detail'
-                        onClick={() => handleDetailClick(item)}
-                      >
-                        <span>Detail</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )
-      )}
+                      <td className='center'>
+                        <div className='action-buttons'>
+                          <button
+                            type='button'
+                            className='action-button edit'
+                            onClick={() => handleEditClick(item.id)}
+                          >
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            type='button'
+                            className='action-button delete'
+                            onClick={() => handleDeleteClick(item)}
+                          >
+                            <span>Delete</span>
+                          </button>
+                          <button
+                            type='button'
+                            className='action-button detail'
+                            onClick={() => handleDetailClick(item)}
+                          >
+                            <span>Detail</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(event, page) => handlePageChange(page)}
+                variant='outlined'
+                shape='rounded'
+                color='primary'
+                showFirstButton
+                showLastButton
+              />
+            </div>
+          )
+        )}
+      </div>
       <style>{styles}</style>
     </SiteLayout>
   );
