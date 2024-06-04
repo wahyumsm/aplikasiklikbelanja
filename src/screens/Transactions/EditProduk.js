@@ -1,28 +1,104 @@
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import SiteLayout from '../../layouts/SiteLayout';
 import Header from '../../components/Header/Header';
 
 const EditProduk = () => {
   const { id } = useParams();
-  const [produkData, SetProdukData] = useState({
-    namaproduk: '',
-    kategori: '',
-    harga: '',
-    stok: '',
-  });
+
+  const [namaproduk, setNamaProduk] = useState('');
+  const [kategori, setKategori] = useState('');
+  const [harga, setHarga] = useState('');
+  const [stok, setStok] = useState('');
+  const [status, setStatus] = useState('');
+  const navigate = useNavigate();
+
+  // untuk aksi handleSubmit mengubah data
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+      if (!namaproduk || !kategori || !harga || !stok || !status) {
+        throw new Error('Semua field harus diisi');
+      }
+      const data = {
+        namaproduk,
+        kategori,
+        harga,
+        stok,
+        status,
+      };
+      const response = await fetch(`http://localhost:5000/dataproduk/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error('gagal menyimpan data');
+      }
+      const responseData = await response.json();
+      console.log('Data berhasil diupdate:', responseData);
+      window.alert('Produk berhasil diubah!');
+      navigate('/transactions');
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  // UNTUK MENGAMBIL ID DATA DAN DI TAMPIL KE FORM DATA
+
+  const handleChangeNamaProduk = (e) => {
+    setNamaProduk(e.target.value);
+  };
+
+  const handleChangeKategori = (e) => {
+    setKategori(e.target.value);
+  };
+
+  const handleChangeHarga = (e) => {
+    setHarga(e.target.value);
+  };
+  const handleChangeStok = (e) => {
+    setStok(e.target.value);
+  };
+
+  const handleChangeStatus = (e) => {
+    setStatus(e.target.value);
+  };
+
   useEffect(() => {
-    const fetchProductData = async () => {
+    const lihatProdukData = async () => {
       try {
-        const response = await fetch(`/api/products/${id}`);
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          throw new Error('token gada isi nya');
+        }
+        const response = await fetch(`http://localhost:5000/dataproduk/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`error status response : ${response.status}`);
+        }
         const data = await response.json();
-        SetProdukData(data);
+        setNamaProduk(data.namaproduk);
+        setKategori(data.kategori);
+        setHarga(data.harga);
+        setStok(data.stok);
+        setStatus(data.status);
       } catch (error) {
-        console.log('error mengambil id data', error);
+        console.log(`error mengambil data:`, error);
       }
     };
-    fetchProductData();
+    lihatProdukData();
   }, [id]);
   const labelStyle = { marginRight: 9, marginLeft: 5 };
   const inputStyle = {
@@ -49,7 +125,8 @@ const EditProduk = () => {
                 name='namaproduk'
                 placeholder='Masukkan Nama Produk'
                 style={inputStyle}
-                value={produkData.namaproduk}
+                value={namaproduk}
+                onChange={handleChangeNamaProduk}
               />
 
               <Form.Label style={labelStyle}>Kategori</Form.Label>
@@ -58,20 +135,28 @@ const EditProduk = () => {
                 name='kategori'
                 placeholder='Masukkan Kategori'
                 style={inputStyle}
+                value={kategori}
+                onChange={handleChangeKategori}
               />
+
               <Form.Label style={labelStyle}>Harga</Form.Label>
               <Form.Control
                 type='text'
                 name='harga'
                 placeholder='Masukkan Total Harga'
                 style={inputStyle}
+                value={harga}
+                onChange={handleChangeHarga}
               />
+
               <Form.Label style={{ ...labelStyle, marginRight: 34 }}>Total Stok</Form.Label>
               <Form.Control
                 type='text'
                 name='stok'
                 placeholder='Masukkan Total Stok'
                 style={inputStyle}
+                value={stok}
+                onChange={handleChangeStok}
               />
 
               <Form.Label style={labelStyle}>Status:</Form.Label>
@@ -79,13 +164,15 @@ const EditProduk = () => {
                 as='select'
                 name='status'
                 style={{ ...inputStyle, width: '285px', marginLeft: 15 }}
+                value={status}
+                onChange={handleChangeStatus}
               >
-                <option>Aktif</option>
-                <option>Non-Aktif</option>
+                <option value='Aktif'>Aktif</option>
+                <option value='Non-Aktif'>Non-Aktif</option>
               </Form.Control>
             </Form.Group>
             <Button
-              // onClick={handleSubmit}
+              onClick={handleSubmit}
               style={{
                 backgroundColor: '#1baa75',
                 fontSize: '16px',
