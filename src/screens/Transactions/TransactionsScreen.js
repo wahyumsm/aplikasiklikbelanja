@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Pagination } from '@mui/material';
 
 import SiteLayout from '../../layouts/SiteLayout';
 import Header from '../../components/Header/Header';
@@ -10,12 +9,12 @@ import TopBar from '../../components/Tables/TopBar/TopBar';
 const TransactionsScreen = () => {
   const [dataProduk, setDataProduk] = useState([]);
   const [keyword, setKeyword] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+
   const [loading, setLoading] = useState(false);
 
   const API_URL = 'http://localhost:5000/dataproduk';
 
+  // INI UNTUK GET
   const getDataProduk = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -31,7 +30,7 @@ const TransactionsScreen = () => {
           },
         });
         setDataProduk(data);
-        setTotalPages(Math.ceil(data.length / 10));
+
         setLoading(false);
       }, 1000);
     } catch (error) {
@@ -52,7 +51,7 @@ const TransactionsScreen = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
   };
-
+  // INI UNTUK DELETE
   const handleDeleteClick = async (item) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -83,10 +82,6 @@ const TransactionsScreen = () => {
 
   const handleDetailClick = (item) => {
     console.log('Detail clicked for item:', item);
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
   };
 
   const navigate = useNavigate();
@@ -149,9 +144,6 @@ const TransactionsScreen = () => {
         searchValue={keyword}
         searchOnChange={handleSearchValue}
         searchSubmit={handleSearchSubmit}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
       />
 
       <div>
@@ -216,16 +208,6 @@ const TransactionsScreen = () => {
                   ))}
                 </tbody>
               </table>
-              <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={(event, page) => handlePageChange(page)}
-                variant='outlined'
-                shape='rounded'
-                color='primary'
-                showFirstButton
-                showLastButton
-              />
             </div>
           )
         )}

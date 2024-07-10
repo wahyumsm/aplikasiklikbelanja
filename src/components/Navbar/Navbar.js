@@ -27,7 +27,7 @@ const Navbar = memo(() => (
         <NavbarButton url='/transactions' icon='shopping_cart' title='Produk' iconColor='#f39c12' />
       </li>
       <li>
-        <NavbarButton url='/trading' icon='person' title='Profil' iconColor='#9b59b6' />
+        <NavbarButton url='/members' icon='person' title='Profil' iconColor='#9b59b6' />
       </li>
       <li>
         <NavbarButton url='/exchange' icon='settings' title='Pengaturan' iconColor='#e74c3c' />
